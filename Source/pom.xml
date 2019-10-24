@@ -3,12 +3,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>blue.mismas.fAnnedomBot</groupId>
-    <artifactId>Anne Clone</artifactId>
+    <groupId>blue.misko.DiscordBotProject</groupId>
+    <artifactId>Bot</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>blue.mismas.fAnnedomBot Anne Clone</name>
+    <name>blue.misko.DiscordBotProject Bot</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
