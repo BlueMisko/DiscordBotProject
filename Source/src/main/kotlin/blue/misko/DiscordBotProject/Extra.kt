@@ -1,4 +1,4 @@
-package blue.mismas.fAnnedomBot
+package blue.misko.DiscordBotProject
 
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.*

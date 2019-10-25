@@ -1,4 +1,4 @@
-package blue.mismas.fAnnedomBot
+package blue.misko.DiscordBotProject
 
 import java.io.*
 
