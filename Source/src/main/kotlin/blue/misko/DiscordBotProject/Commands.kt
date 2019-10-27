@@ -43,7 +43,7 @@ fun executePlayMusicCommand (event: MessageReceivedEvent, parameters: String){
 }
 
 fun executeHelpCommand (event: MessageReceivedEvent, parameters: String){
-    event.channel.sendMessage("Help command is not yet implemented").queue()
+    event.channel.sendMessage("```!ping```").queue()
 }
 
 fun executeAddCommendCommand (event: MessageReceivedEvent, parameters: String){
