@@ -3,10 +3,13 @@ package blue.misko.DiscordBotProject
 import java.io.*
 
 fun GetAbsolutePath(dirPath: String): String{ //creates directory if it doesn't exist
-    var directory = File(dirPath)
-        if(! directory.exists()){
-            directory.mkdir()
-        }
+    var directory = File(File("").absolutePath+"/../"+"/../"+"/../blue.mismas.DiscordBotProject/"+dirPath).normalize()
+    if(! directory.parentFile.exists()){
+        directory.parentFile.mkdirs()
+    }
+    if(! directory.exists()){
+        directory.mkdir()
+    }
     return directory.absolutePath
 }
 
