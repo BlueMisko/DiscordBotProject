@@ -19,11 +19,12 @@ class Bot: ListenerAdapter() {
             return
         }
         val prefix = GetPrefix(event.guild.id)
-        if(event.author.id=="216095103104712706" && event.message.contentRaw=="Admin stop"){
+        var command =event.message.contentRaw.decapitalize()
+        if(event.author.id=="216095103104712706" && command=="admin stop"){
             exitProcess(0)
         }
         if(event.message.contentRaw.startsWith(prefix)){
-            var command =event.message.contentRaw.removePrefix(prefix)
+            command = command.removePrefix(prefix)
             executeCommand(event, command.trim())
         }
     }
