@@ -23,7 +23,7 @@ class Bot: ListenerAdapter() {
         if(event.author.id=="216095103104712706" && command=="admin stop"){
             exitProcess(0)
         }
-        if(event.message.contentRaw.startsWith(prefix)){
+        if(command.startsWith(prefix)){
             command = command.removePrefix(prefix)
             executeCommand(event, command.trim())
         }

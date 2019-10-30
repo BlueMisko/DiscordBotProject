@@ -14,13 +14,29 @@ fun executeCommand(event: MessageReceivedEvent, command:String){
         command.startsWith("help") -> executeHelpCommand(event, command.removePrefix("help").trim())
         command.startsWith("ping") -> event.channel.sendMessage("pong").queue()
         command.startsWith("add command") -> executeAddCommendCommand(event, command.removePrefix("add command").trim())
+        //command.startsWith("") -> {}
         else ->{
-            event.channel.sendMessage("What?").queue()
+            if(command.contains("says what")){
+                event.channel.sendMessage("I'm not falling for that again").queue()
+            }
+            event.channel.sendMessage("What?\n I don't know what you want. Try using " + GetPrefix(event.guild.id) +"help").queue()
         }
     }
 }
 
 fun executeBirthdayCommand (event: MessageReceivedEvent, parameters: String){
+    /*when (true){
+        parameters.startsWith("remember")->{}
+        parameters.startsWith("forget")->{}
+        parameters.startsWith("all")->{}
+        parameters.startsWith("help")->{}
+        parameters.startsWith("<@")->{}
+        //parameters.startsWith("")->{}
+
+        else -> {
+
+        }
+    }*/
     event.channel.sendMessage("Birthday commands are not yet implemented").queue()
 }
 
@@ -37,11 +53,11 @@ fun executeSetPrefixCommand (event: MessageReceivedEvent, parameters: String){
 }
 
 fun executeSetRoleCommand (event: MessageReceivedEvent, parameters: String){
-    event.channel.sendMessage("Birthday commands are not yet implemented").queue()
+    event.channel.sendMessage("Set role commands are not yet implemented").queue()
 }
 
 fun executePlayMusicCommand (event: MessageReceivedEvent, parameters: String){
-    event.channel.sendMessage("Birthday commands are not yet implemented").queue()
+    event.channel.sendMessage("Play music commands are not yet implemented").queue()
 }
 
 fun executePFPCommand (event: MessageReceivedEvent, parameters: String){
@@ -63,7 +79,14 @@ fun executePFPCommand (event: MessageReceivedEvent, parameters: String){
 }
 
 fun executeHelpCommand (event: MessageReceivedEvent, parameters: String){
-    event.channel.sendMessage("```!ping```").queue()
+    event.channel.sendMessage("Type "+ GetPrefix(event.guild.id)+" + command: ```asciidoc\n" +
+            "pfp @user:: get their profile picture\n" + /*
+            "birthday:: birthday commands\n" +
+            "-> remember date(dd/mm/yyyy):: saves your birthday\n" +
+            "-> forget:: deletes your birthday\n" +
+            "-> all:: shows all birthdays\n" +
+            "-> @user:: get users birthday\n" +*/
+            "```").queue()
 }
 
 fun executeAddCommendCommand (event: MessageReceivedEvent, parameters: String){
