@@ -3,6 +3,7 @@ package blue.misko.DiscordBotProject
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.*
+import org.jetbrains.exposed.sql.Database
 
 fun executeCommand(event: MessageReceivedEvent, command:String){
     when (true){
@@ -25,6 +26,7 @@ fun executeCommand(event: MessageReceivedEvent, command:String){
 }
 
 fun executeBirthdayCommand (event: MessageReceivedEvent, parameters: String){
+    Database.connect("Jdbc:sqlite:"+GetAbsolutePath("Servers/${event.guild.id}")+"","org.sqlite.JDBC")
     /*when (true){
         parameters.startsWith("remember")->{}
         parameters.startsWith("forget")->{}
