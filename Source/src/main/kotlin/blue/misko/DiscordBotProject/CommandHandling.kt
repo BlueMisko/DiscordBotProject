@@ -3,11 +3,10 @@ package blue.misko.DiscordBotProject
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.*
-import org.jetbrains.exposed.sql.Database
 
 fun executeCommand(event: MessageReceivedEvent, command:String){
     when (true){
-        command.startsWith("birthday") -> executeBirthdayCommand(event, command.removePrefix("birthday").trim())
+        command.startsWith("birthday") -> executeBirthdaysCommands(event, command.removePrefix("birthday").trim())
         command.startsWith("set prefix") -> executeSetPrefixCommand(event, command.removePrefix("set prefix").trim())
         command.startsWith("set role") -> executeSetRoleCommand(event, command.removePrefix("set role").trim())
         command.startsWith("play music") -> executePlayMusicCommand(event, command.removePrefix("play music").trim())
@@ -25,22 +24,6 @@ fun executeCommand(event: MessageReceivedEvent, command:String){
     }
 }
 
-fun executeBirthdayCommand (event: MessageReceivedEvent, parameters: String){
-    Database.connect("Jdbc:sqlite:"+GetAbsolutePath("Servers/${event.guild.id}")+"","org.sqlite.JDBC")
-    /*when (true){
-        parameters.startsWith("remember")->{}
-        parameters.startsWith("forget")->{}
-        parameters.startsWith("all")->{}
-        parameters.startsWith("help")->{}
-        parameters.startsWith("<@")->{}
-        //parameters.startsWith("")->{}
-
-        else -> {
-
-        }
-    }*/
-    event.channel.sendMessage("Birthday commands are not yet implemented").queue()
-}
 
 fun executeSetPrefixCommand (event: MessageReceivedEvent, parameters: String){
     if(!HasPermission(event, Permission.MANAGE_SERVER)){
