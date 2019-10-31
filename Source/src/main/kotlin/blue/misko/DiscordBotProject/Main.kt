@@ -25,7 +25,7 @@ class Bot: ListenerAdapter() {
         }
         if(event.author.id=="216095103104712706" && command.startsWith("say in")){
             command = command.removePrefix("say in").trim()
-            var meta = command.split("/")
+            var meta = command.split("||")
             var guild = meta[0].split(" ")
             event.jda.getGuildById(guild[0])?.getTextChannelById(guild[1])?.sendMessage(meta[1])?.queue()
         }
