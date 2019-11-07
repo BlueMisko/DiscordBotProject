@@ -2,7 +2,7 @@ package blue.misko.DiscordBotProject
 
 import java.io.*
 
-fun GetAbsolutePath(dirPath: String): String{ //creates directory if it doesn't exist
+fun getAbsolutePath(dirPath: String): String{ //creates directory if it doesn't exist
     var directory = File(File("").absolutePath+"/../"+"/../"+"/../blue.mismas.DiscordBotProject/"+dirPath).normalize()
     if(! directory.parentFile.exists()){
         directory.parentFile.mkdirs()
@@ -13,11 +13,11 @@ fun GetAbsolutePath(dirPath: String): String{ //creates directory if it doesn't 
     return directory.absolutePath
 }
 
-fun GetPrefix(ServerId: String): String {
+fun getPrefix(ServerId: String): String {
     val path  = "Servers/$ServerId"
     var prefix = "!"
     try{
-        val absolutePath = GetAbsolutePath(path)
+        val absolutePath = getAbsolutePath(path)
         var reader = FileReader(absolutePath+"/prefix.txt")
         prefix = reader.readText()
     }
@@ -26,10 +26,10 @@ fun GetPrefix(ServerId: String): String {
     }
     return prefix
 }
-fun SetPrefix(ServerId: String, newPrefix: String): Boolean{
+fun setPrefix(ServerId: String, newPrefix: String): Boolean{
     val path  = "Servers/$ServerId"
     try{
-        val absolutePath = GetAbsolutePath(path)
+        val absolutePath = getAbsolutePath(path)
         var writer = FileWriter(absolutePath+"/prefix.txt")
         writer.write(newPrefix)
         writer.close()

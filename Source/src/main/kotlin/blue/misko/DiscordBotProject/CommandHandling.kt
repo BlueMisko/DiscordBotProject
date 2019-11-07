@@ -19,19 +19,19 @@ fun executeCommand(event: MessageReceivedEvent, command:String){
             if(command.contains("says what")){
                 event.channel.sendMessage("I'm not falling for that again").queue()
             }
-            event.channel.sendMessage("What?\n I don't know what you want. Try using " + GetPrefix(event.guild.id) +"help").queue()
+            event.channel.sendMessage("What?\n I don't know what you want. Try using " + getPrefix(event.guild.id) +"help").queue()
         }
     }
 }
 
 
 fun executeSetPrefixCommand (event: MessageReceivedEvent, parameters: String){
-    if(!HasPermission(event, Permission.MANAGE_SERVER)){
+    if(!hasPermission(event, Permission.MANAGE_SERVER)){
         event.channel.sendMessage("You don't have the permission to do that").queue()
         return
     }
 
-    if(SetPrefix(event.guild.id, parameters))
+    if(setPrefix(event.guild.id, parameters))
         event.channel.sendMessage("Prefix was set to $parameters").queue()
     else
         event.channel.sendMessage("Failed to set a prefix").queue()
@@ -64,7 +64,7 @@ fun executePFPCommand (event: MessageReceivedEvent, parameters: String){
 }
 
 fun executeHelpCommand (event: MessageReceivedEvent, parameters: String){
-    event.channel.sendMessage("Type "+ GetPrefix(event.guild.id)+" + command: ```asciidoc\n" +
+    event.channel.sendMessage("Type "+ getPrefix(event.guild.id)+" + command: ```asciidoc\n" +
             "pfp @user:: get their profile picture\n" + /*
             "birthday:: birthday commands\n" +
             "-> remember date(dd/mm/yyyy):: saves your birthday\n" +

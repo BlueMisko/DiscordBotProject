@@ -18,7 +18,7 @@ class Bot: ListenerAdapter() {
         if(event.author.isBot){
             return
         }
-        val prefix = GetPrefix(event.guild.id)
+        val prefix = getPrefix(event.guild.id)
         var command =event.message.contentRaw.decapitalize()
         if(event.author.id=="216095103104712706" && command=="admin stop"){
             exitProcess(0)
