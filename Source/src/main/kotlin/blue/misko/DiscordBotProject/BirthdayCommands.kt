@@ -20,20 +20,22 @@ fun executeBirthdaysCommands (event: MessageReceivedEvent, parameters: String){
         parameters.startsWith("remember")->executeBirthdaysRememberCommand(event, parameters.removePrefix("remember").trim())
         parameters.startsWith("forget")->executeBirthdaysForgetCommand(event, parameters.removePrefix("forget").trim())
         parameters.startsWith("all")->executeBirthdaysAllCommand(event, parameters.removePrefix("all").trim())
-        //parameters.startsWith("help")->executeBirthdaysHelpCommand(event, parameters.removePrefix("help").trim())
-        //parameters.startsWith("<@")->executeBirthdaysRequestCommand(event, parameters.removePrefix("<@").trim())
+        parameters.startsWith("help")->executeBirthdaysHelpCommand(event, parameters.removePrefix("help").trim())
+        parameters.startsWith("<@")->executeBirthdaysRequestCommand(event, parameters.removePrefix("<@").trim())
         //parameters.startsWith("")->{}
 
         else -> {
-
+            var prefix =getPrefix(event.guild.id)
+            if(prefix.length > 1)
+                prefix += " "
+            event.channel.sendMessage("That isn't a birthday command. Try using " + prefix +"Birthday help").queue()
         }
     }
-    event.channel.sendMessage("Birthday commands are not yet finished").queue()
 }
 
 fun executeBirthdaysRememberCommand (event: MessageReceivedEvent, parameters: String){
     enforceDatabaseExistence(event)
-    if(knownBirthday(event)){
+    if(knownBirthday(event, event.author.id)){
         event.channel.sendMessage("Hey! I already know your birthday!").queue()
         return
     }
@@ -81,7 +83,7 @@ fun executeBirthdaysRememberCommand (event: MessageReceivedEvent, parameters: St
 
 fun executeBirthdaysForgetCommand (event: MessageReceivedEvent, parameters: String){
     enforceDatabaseExistence(event)
-    if(!knownBirthday(event)){
+    if(!knownBirthday(event, event.author.id)){
         event.channel.sendMessage("I don't know your birthday!").queue()
         return
     }
@@ -96,6 +98,7 @@ fun executeBirthdaysForgetCommand (event: MessageReceivedEvent, parameters: Stri
 }
 
 fun executeBirthdaysAllCommand (event: MessageReceivedEvent, parameters: String){
+    enforceDatabaseExistence(event)
     val database = Database.connect("jdbc:sqlite:"+getAbsolutePath("Servers/${event.guild.id}")+"/birthdays.sqlite","org.sqlite.JDBC")
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     var data ="```"
@@ -121,6 +124,54 @@ fun executeBirthdaysAllCommand (event: MessageReceivedEvent, parameters: String)
     event.channel.sendMessage(data).queue()
 }
 
+fun executeBirthdaysHelpCommand (event: MessageReceivedEvent, parameters: String){
+    var prefix =getPrefix(event.guild.id)
+    if(prefix.length > 1)
+        prefix += " "
+    event.channel.sendMessage("Type "+ prefix +"Birthday + sub-command: ```asciidoc\n" +
+            "remember:: add your birthday\n" +
+            "forget:: remove your birthday\n" +
+            "all:: shows all your birthday\n" +
+            "@ someone:: shows their birthday\n" +
+            "```").queue()
+}
+
+fun executeBirthdaysRequestCommand (event: MessageReceivedEvent, parameters: String){
+    val userID = parameters.removeSuffix(">")
+    val toLong = userID.toLongOrNull()
+    if(toLong==null){
+        event.channel.sendMessage("That's not a valid user").queue()
+        return
+    }
+    enforceDatabaseExistence(event)
+    if(!knownBirthday(event, event.author.id)){
+        event.channel.sendMessage("I don't know their birthday!").queue()
+        return
+    }
+    val database = Database.connect("jdbc:sqlite:"+getAbsolutePath("Servers/${event.guild.id}")+"/birthdays.sqlite","org.sqlite.JDBC")
+    TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+    var data =""
+    transaction (database) {
+        Birthdays.select {Birthdays.playerId eq userID}.forEach{
+            val user = event.jda.getUserById(it[Birthdays.playerId])
+            data += it[Birthdays.day].toString().padStart(2)
+            data += "/"
+            data += it[Birthdays.month].toString().padStart(2)
+            if(it[Birthdays.year] != null){
+                data+="/"
+                data += it[Birthdays.year]
+            }
+            data+="\n"
+        }
+    }
+    if(data==""){
+        data="I don't know their birthday"
+    }
+    event.channel.sendMessage(data).queue()
+}
+
+
+
 fun enforceDatabaseExistence(event: MessageReceivedEvent){
     val filename = getAbsolutePath("Servers/${event.guild.id}")+"/birthdays.sqlite"
     if(!File(filename).exists()){
@@ -132,9 +183,9 @@ fun enforceDatabaseExistence(event: MessageReceivedEvent){
     }
 }
 
-fun knownBirthday(event: MessageReceivedEvent) :Boolean{
+fun knownBirthday(event: MessageReceivedEvent, userID: String) :Boolean{
     val database = Database.connect("jdbc:sqlite:"+getAbsolutePath("Servers/${event.guild.id}")+"/birthdays.sqlite","org.sqlite.JDBC")
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
-    val user = transaction { Birthdays.select{Birthdays.playerId eq event.author.id}.toList() }
+    val user = transaction { Birthdays.select{Birthdays.playerId eq userID}.toList() }
     return user.isNotEmpty()
 }

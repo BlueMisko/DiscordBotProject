@@ -16,9 +16,12 @@ fun executeCommand(event: MessageReceivedEvent, command:String){
         command.startsWith("add command") -> executeAddCommendCommand(event, command.removePrefix("add command").trim())
         //command.startsWith("") -> {}
         else ->{
-            if(command.contains("says what")){
+            if(command.contains("says what")||command.contains("say what")){
                 event.channel.sendMessage("I'm not falling for that again").queue()
             }
+            var prefix =getPrefix(event.guild.id)
+            if(prefix.length > 1)
+                prefix += " "
             event.channel.sendMessage("What?\n I don't know what you want. Try using " + getPrefix(event.guild.id) +"help").queue()
         }
     }
@@ -64,9 +67,10 @@ fun executePFPCommand (event: MessageReceivedEvent, parameters: String){
 }
 
 fun executeHelpCommand (event: MessageReceivedEvent, parameters: String){
-    event.channel.sendMessage("Type "+ getPrefix(event.guild.id)+" + command: ```asciidoc\n" +
-            "pfp @user:: get their profile picture\n" + /*
-            "birthday:: birthday commands\n" +
+    val prefix =getPrefix(event.guild.id)
+    event.channel.sendMessage("Type "+ prefix +" + command: ```asciidoc\n" +
+            "pfp @user:: get their profile picture\n" +
+            "birthday:: birthday commands\n" + /*
             "-> remember date(dd/mm/yyyy):: saves your birthday\n" +
             "-> forget:: deletes your birthday\n" +
             "-> all:: shows all birthdays\n" +
