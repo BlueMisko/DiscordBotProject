@@ -131,7 +131,7 @@ fun executeBirthdaysHelpCommand (event: MessageReceivedEvent, parameters: String
     event.channel.sendMessage("Type "+ prefix +"Birthday + sub-command: ```asciidoc\n" +
             "remember:: add your birthday\n" +
             "forget:: remove your birthday\n" +
-            "all:: shows all your birthday\n" +
+            "all:: shows all birthdays\n" +
             "@ someone:: shows their birthday\n" +
             "```").queue()
 }
