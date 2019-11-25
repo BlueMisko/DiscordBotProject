@@ -203,14 +203,21 @@ fun executeBirthdaysSetChannelCommand(event: MessageReceivedEvent, parameters: S
     val channelID = parameters.removePrefix("<#").removeSuffix(">")
     var result = false
     try{
-        val channel = event.guild.getTextChannelById(channelID)
-        result= writeToFile(getAbsolutePath("Servers/"+event.guild.id)+"/BirthdayChannel.txt", channel?.id!!)
+        if(channelID!="") {
+            val channel = event.guild.getTextChannelById(channelID)
+            result = writeToFile(getAbsolutePath("Servers/" + event.guild.id) + "/BirthdayChannel.txt", channel?.id!!)
+        }
+        else
+            result = writeToFile(getAbsolutePath("Servers/" + event.guild.id) + "/BirthdayChannel.txt", "")
     }
     catch (e: Exception){
 
     }
     if(result){
-        event.channel.sendMessage("Channel set").queue()
+        if(channelID!="")
+            event.channel.sendMessage("Channel set").queue()
+        else
+            event.channel.sendMessage("Channel cleared").queue()
     }
     else{
         event.channel.sendMessage("Failed to set a channel").queue()
