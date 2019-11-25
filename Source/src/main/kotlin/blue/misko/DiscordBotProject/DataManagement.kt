@@ -40,3 +40,29 @@ fun setPrefix(ServerId: String, newPrefix: String): Boolean{
     }
     return true
 }
+
+
+fun writeToFile(path: String, text: String): Boolean{
+    try{
+        var writer = FileWriter(path)
+        writer.write(text)
+        writer.close()
+    }
+    catch(e:Exception){
+        print(e.message)
+        return false
+    }
+    return true
+}
+
+fun readFromFile(path: String): String{
+    var text= ""
+    try{
+        var reader = FileReader(path)
+        text = reader.readText()
+    }
+    catch(e:Exception){
+        print(e.message)
+    }
+    return text
+}

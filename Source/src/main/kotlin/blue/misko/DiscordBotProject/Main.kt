@@ -4,12 +4,22 @@ import net.dv8tion.jda.api.*
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.*
 import net.dv8tion.jda.api.hooks.*
+import java.util.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     var bot = JDABuilder(args[0])
             .setActivity(Activity.listening("your shit"))
             .build()
+
+    System.currentTimeMillis()
+
+
+    Timer("Birthdays",false).scheduleAtFixedRate(
+        HappyBirthdayWishing(bot),
+        getNextDateInGMT(12 * millisecondsInAHour()),
+        (1*24*60*60*1000)
+    )
     bot.addEventListener(Bot())
 }
 

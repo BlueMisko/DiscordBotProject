@@ -1,10 +1,16 @@
 package blue.misko.DiscordBotProject
 
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.*
 import java.io.File
 import java.sql.Connection
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import java.util.TimerTask
 
 
 object Birthdays: Table(){
@@ -15,12 +21,13 @@ object Birthdays: Table(){
 }
 
 fun executeBirthdaysCommands (event: MessageReceivedEvent, parameters: String){
-    enforceDatabaseExistence(event)
+    enforceDatabaseExistence(event.guild.id)
     when (true){
         parameters.startsWith("remember")->executeBirthdaysRememberCommand(event, parameters.removePrefix("remember").trim())
         parameters.startsWith("forget")->executeBirthdaysForgetCommand(event, parameters.removePrefix("forget").trim())
         parameters.startsWith("all")->executeBirthdaysAllCommand(event, parameters.removePrefix("all").trim())
         parameters.startsWith("help")->executeBirthdaysHelpCommand(event, parameters.removePrefix("help").trim())
+        parameters.startsWith("set channel")->executeBirthdaysSetChannelCommand(event, parameters.removePrefix("set channel").trim())
         parameters.startsWith("<@")->executeBirthdaysRequestCommand(event, parameters.removePrefix("<@").trim())
         //parameters.startsWith("")->{}
 
@@ -34,7 +41,7 @@ fun executeBirthdaysCommands (event: MessageReceivedEvent, parameters: String){
 }
 
 fun executeBirthdaysRememberCommand (event: MessageReceivedEvent, parameters: String){
-    enforceDatabaseExistence(event)
+    enforceDatabaseExistence(event.guild.id)
     if(knownBirthday(event, event.author.id)){
         event.channel.sendMessage("Hey! I already know your birthday!").queue()
         return
@@ -82,7 +89,7 @@ fun executeBirthdaysRememberCommand (event: MessageReceivedEvent, parameters: St
 }
 
 fun executeBirthdaysForgetCommand (event: MessageReceivedEvent, parameters: String){
-    enforceDatabaseExistence(event)
+    enforceDatabaseExistence(event.guild.id)
     if(!knownBirthday(event, event.author.id)){
         event.channel.sendMessage("I don't know your birthday!").queue()
         return
@@ -98,7 +105,7 @@ fun executeBirthdaysForgetCommand (event: MessageReceivedEvent, parameters: Stri
 }
 
 fun executeBirthdaysAllCommand (event: MessageReceivedEvent, parameters: String){
-    enforceDatabaseExistence(event)
+    enforceDatabaseExistence(event.guild.id)
     val database = Database.connect("jdbc:sqlite:"+getAbsolutePath("Servers/${event.guild.id}")+"/birthdays.sqlite","org.sqlite.JDBC")
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     var data ="```"
@@ -143,7 +150,7 @@ fun executeBirthdaysRequestCommand (event: MessageReceivedEvent, parameters: Str
         event.channel.sendMessage("That's not a valid user").queue()
         return
     }
-    enforceDatabaseExistence(event)
+    enforceDatabaseExistence(event.guild.id)
     if(!knownBirthday(event, event.author.id)){
         event.channel.sendMessage("I don't know their birthday!").queue()
         return
@@ -172,8 +179,8 @@ fun executeBirthdaysRequestCommand (event: MessageReceivedEvent, parameters: Str
 
 
 
-fun enforceDatabaseExistence(event: MessageReceivedEvent){
-    val filename = getAbsolutePath("Servers/${event.guild.id}")+"/birthdays.sqlite"
+fun enforceDatabaseExistence(serverID: String){
+    val filename = getAbsolutePath("Servers/${serverID}")+"/birthdays.sqlite"
     if(!File(filename).exists()){
         val database = Database.connect("jdbc:sqlite:$filename","org.sqlite.JDBC")
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
@@ -188,4 +195,65 @@ fun knownBirthday(event: MessageReceivedEvent, userID: String) :Boolean{
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     val user = transaction { Birthdays.select{Birthdays.playerId eq userID}.toList() }
     return user.isNotEmpty()
+}
+
+
+
+fun executeBirthdaysSetChannelCommand(event: MessageReceivedEvent, parameters: String){
+    val channelID = parameters.removePrefix("<#").removeSuffix(">")
+    var result = false
+    try{
+        val channel = event.guild.getTextChannelById(channelID)
+        result= writeToFile(getAbsolutePath("Servers/"+event.guild.id)+"/BirthdayChannel.txt", channel?.id!!)
+    }
+    catch (e: Exception){
+
+    }
+    if(result){
+        event.channel.sendMessage("Channel set").queue()
+    }
+    else{
+        event.channel.sendMessage("Failed to set a channel").queue()
+    }
+}
+
+fun getBirthdaysToday(serverID: String): String{
+    enforceDatabaseExistence(serverID)
+    val database = Database.connect("jdbc:sqlite:"+getAbsolutePath("Servers/${serverID}")+"/birthdays.sqlite","org.sqlite.JDBC")
+    TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+    var users = ArrayList<String>()
+
+    val currentDate = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE)!!
+    val day: Int = currentDate.substring(6,8).toInt()
+    val month: Int =currentDate.substring(4,6).toInt()
+    transaction (database) {
+        Birthdays.select { (Birthdays.day eq day) and (Birthdays.month eq month)}.toList().forEach{
+            users.add(it[Birthdays.playerId])
+        }
+    }
+    var text = ""
+    users.forEachIndexed { index, user ->
+        text += "<@$user>"
+        when(users.size + index){
+            1->{}
+            2-> text += " and "
+            else -> ", "
+        }
+    }
+    return text
+}
+
+
+class HappyBirthdayWishing(input: JDA) : TimerTask() {
+
+    private val bot: JDA = input
+
+    override fun run(){
+        File(getAbsolutePath("Servers")).listFiles().forEach {
+            val channelID = readFromFile(getAbsolutePath("Servers/"+it.name)+"/BirthdayChannel.txt")
+            val channel= if (bot.getTextChannelById(channelID) != null) bot.getTextChannelById(channelID)!! else return@forEach
+            val text=getBirthdaysToday(it.name)
+            if(text!="")channel.sendMessage("Happy birthday to $text").queue()
+        }
+    }
 }
