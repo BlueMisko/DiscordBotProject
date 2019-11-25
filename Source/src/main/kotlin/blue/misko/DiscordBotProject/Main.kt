@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
     Timer("Birthdays",false).scheduleAtFixedRate(
         HappyBirthdayWishing(bot),
         getNextDateInGMT(12 * millisecondsInAHour()),
-        (1*24*60*60*1000)
+        millisecondsInADay()
     )
     bot.addEventListener(Bot())
 }
