@@ -1,6 +1,7 @@
 package blue.misko.DiscordBotProject
 
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jetbrains.exposed.sql.*
@@ -200,6 +201,12 @@ fun knownBirthday(event: MessageReceivedEvent, userID: String) :Boolean{
 
 
 fun executeBirthdaysSetChannelCommand(event: MessageReceivedEvent, parameters: String){
+
+    if(!hasPermission(event, Permission.MANAGE_SERVER)){
+        event.channel.sendMessage("You don't have the permission to do that").queue()
+        return
+    }
+
     val channelID = parameters.removePrefix("<#").removeSuffix(">")
     var result = false
     try{
