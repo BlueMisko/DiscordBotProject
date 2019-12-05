@@ -9,7 +9,7 @@ fun executeCommand(event: MessageReceivedEvent, command:String){
         command.startsWith("birthday") -> executeBirthdaysCommands(event, command.removePrefix("birthday").trim())
         command.startsWith("set prefix") -> executeSetPrefixCommand(event, command.removePrefix("set prefix").trim())
         command.startsWith("set role") -> executeSetRoleCommand(event, command.removePrefix("set role").trim())
-        command.startsWith("play music") -> executePlayMusicCommand(event, command.removePrefix("play music").trim())
+        command.startsWith("play music") -> executeMusicCommands(event, command.removePrefix("play music").trim())
         command.startsWith("pfp") -> executePFPCommand(event, command.removePrefix("pfp").trim())
         command.startsWith("help") -> executeHelpCommand(event, command.removePrefix("help").trim())
         command.startsWith("ping") -> event.channel.sendMessage("pong").queue()
@@ -42,10 +42,6 @@ fun executeSetPrefixCommand (event: MessageReceivedEvent, parameters: String){
 
 fun executeSetRoleCommand (event: MessageReceivedEvent, parameters: String){
     event.channel.sendMessage("Set role commands are not yet implemented").queue()
-}
-
-fun executePlayMusicCommand (event: MessageReceivedEvent, parameters: String){
-    event.channel.sendMessage("Play music commands are not yet implemented").queue()
 }
 
 fun executePFPCommand (event: MessageReceivedEvent, parameters: String){

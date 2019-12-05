@@ -1,5 +1,6 @@
 package blue.misko.DiscordBotProject
 
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import net.dv8tion.jda.api.*
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.*
@@ -8,29 +9,29 @@ import java.util.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
-    var bot = JDABuilder(args[0])
-            .setActivity(Activity.listening("your shit"))
-            .build()
 
-    System.currentTimeMillis()
-
+    Bot = JDABuilder(args[0])
+        .addEventListeners(BotHandler())
+        .setActivity(Activity.listening("your shit"))
+        .build()
 
     Timer("Birthdays",false).scheduleAtFixedRate(
-        HappyBirthdayWishing(bot),
-        getNextDateInGMT(12 * millisecondsInAHour()),
+        DailyEvents(),
+        getNextDateInGMT(millisecondsInAHour()*12),
         millisecondsInADay()
     )
-    bot.addEventListener(Bot())
+
+    AudioSourceManagers.registerRemoteSources(playerManager)
 }
 
-class Bot: ListenerAdapter() {
+class BotHandler: ListenerAdapter() {
     override fun onMessageReceived(event: MessageReceivedEvent){
         if(event.author.isBot){
             return
         }
         val prefix = getPrefix(event.guild.id)
         var command =event.message.contentRaw.decapitalize()
-        if(event.author.id=="216095103104712706" && command=="admin stop"){
+        if(event.author.id=="216095103104712706" && command=="shutdown"){
             exitProcess(0)
         }
         if(event.author.id=="216095103104712706" && command.startsWith("say in")){
@@ -43,5 +44,12 @@ class Bot: ListenerAdapter() {
             command = command.removePrefix(prefix)
             executeCommand(event, command.trim())
         }
+    }
+}
+
+class DailyEvents : TimerTask() {
+
+    override fun run(){
+        happyBirthdayWishing()
     }
 }

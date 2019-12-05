@@ -1,6 +1,10 @@
 package blue.misko.DiscordBotProject
 
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.events.message.*
 import java.util.*
 
@@ -43,3 +47,7 @@ fun millisecondsInADay():Long{
 fun millisecondsInAHour():Long{
     return 3600000
 }
+
+lateinit  var Bot: JDA
+
+val playerManager = DefaultAudioPlayerManager()

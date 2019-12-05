@@ -199,7 +199,6 @@ fun knownBirthday(event: MessageReceivedEvent, userID: String) :Boolean{
 }
 
 
-
 fun executeBirthdaysSetChannelCommand(event: MessageReceivedEvent, parameters: String){
 
     if(!hasPermission(event, Permission.MANAGE_SERVER)){
@@ -258,16 +257,11 @@ fun getBirthdaysToday(serverID: String): String{
 }
 
 
-class HappyBirthdayWishing(input: JDA) : TimerTask() {
-
-    private val bot: JDA = input
-
-    override fun run(){
-        File(getAbsolutePath("Servers")).listFiles().forEach {
-            val channelID = readFromFile(getAbsolutePath("Servers/"+it.name)+"/BirthdayChannel.txt")
-            val channel= if (bot.getTextChannelById(channelID) != null) bot.getTextChannelById(channelID)!! else return@forEach
-            val text=getBirthdaysToday(it.name)
-            if(text!="")channel.sendMessage("Happy birthday to $text").queue()
-        }
+fun happyBirthdayWishing(){
+    File(getAbsolutePath("Servers")).listFiles().forEach {
+        val channelID = readFromFile(getAbsolutePath("Servers/" + it.name) + "/BirthdayChannel.txt")
+        val channel = if (Bot.getTextChannelById(channelID) != null) Bot.getTextChannelById(channelID)!! else return@forEach
+        val text = getBirthdaysToday(it.name)
+        if (text != "") channel.sendMessage("Happy birthday to $text").queue()
     }
 }
