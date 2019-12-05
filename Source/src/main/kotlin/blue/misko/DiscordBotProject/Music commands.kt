@@ -33,9 +33,15 @@ fun executeMusicCommands (event: MessageReceivedEvent, parameters: String){
 fun executeMusicPlayCommand(event: MessageReceivedEvent, parameters: String) {
     val guild = event.guild
 
-    val channel = guild.getVoiceChannelsByName("music", true)[0]
-    val manager = guild.audioManager
+    val voiceState = event.member!!.voiceState!!
 
+    if(!voiceState.inVoiceChannel()){
+        event.channel.sendMessage("You need to be in a voice channel to use this command").queue()
+        return
+    }
+
+    val channel = voiceState.channel!!
+    val manager = guild.audioManager
 
     val player = playerManager.createPlayer()
 
