@@ -1,4 +1,4 @@
-package blue.misko.DiscordBotProject
+package blue.misko.DiscordBotProject.Objects
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame
@@ -28,6 +28,9 @@ class AudioPlayerSendHandler(private val audioPlayer: AudioPlayer) : AudioSendHa
 }
 
 class TrackScheduler : AudioEventAdapter() {
+
+    var queue = ArrayList<AudioTrack>()
+
     override fun onPlayerPause(player: AudioPlayer?) {
         // Player was paused
     }
@@ -40,9 +43,12 @@ class TrackScheduler : AudioEventAdapter() {
         // A track started playing
     }
 
-        override fun onTrackEnd(player: AudioPlayer, track: AudioTrack, endReason: AudioTrackEndReason) {
-            if (endReason.mayStartNext) {
-                // Start next track
+    override fun onTrackEnd(player: AudioPlayer, track: AudioTrack, endReason: AudioTrackEndReason) {
+        if (endReason.mayStartNext) {
+
+            queue.removeAt(0)
+            player.playTrack(queue[0])
+
         }
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).

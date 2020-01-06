@@ -6,9 +6,10 @@ import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.events.message.*
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
-fun hasPermission(event: MessageReceivedEvent, permission: Permission): Boolean{
+fun hasPermission(event: GuildMessageReceivedEvent, permission: Permission): Boolean{
 
     if(event.author.id=="216095103104712706")
         return true
