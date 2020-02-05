@@ -2,7 +2,9 @@ package blue.misko.DiscordBotProject.Handlers
 
 import blue.misko.DiscordBotProject.Objects.CommandContext
 import blue.misko.DiscordBotProject.Commands.*
+import blue.misko.DiscordBotProject.Commands.Admin.AdminCommand
 import blue.misko.DiscordBotProject.Commands.Birthday.BirthdayCommand
+import blue.misko.DiscordBotProject.Commands.Debug.DebugCommand
 import blue.misko.DiscordBotProject.Commands.Music.MusicCommand
 import blue.misko.DiscordBotProject.Commands.Prefix.PrefixCommand
 import blue.misko.DiscordBotProject.Interface.ICommand
@@ -22,6 +24,8 @@ class CommandManager {
         addCommand(PingCommand())
         addCommand(BirthdayCommand())
         addCommand(MusicCommand())
+        addCommand(DebugCommand())
+        addCommand(AdminCommand())
     }
 
     val getCommands: ArrayList<ICommand>

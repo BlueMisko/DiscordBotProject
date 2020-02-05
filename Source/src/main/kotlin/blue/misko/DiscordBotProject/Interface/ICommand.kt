@@ -14,7 +14,6 @@ interface ICommand {
     val neededRank: Int
     val hiddenCommand: Boolean
 
-
     fun handle(ctx: CommandContext){
         var valid = true
 
@@ -37,6 +36,16 @@ interface ICommand {
     }
 
     fun execute(ctx: CommandContext)
+
+    fun addSubCommand(cmd: ICommand) {
+        val nameFound = this.subCommands?.stream()?.anyMatch { it.getName() == cmd.getName() }
+
+        if (nameFound == true) {
+            throw IllegalArgumentException("A command with this name is already present")
+        }
+
+        subCommands?.add(cmd)
+    }
 
     fun handleSubCommand(ctx: CommandContext): Boolean{
         var foundCommand = false
@@ -71,19 +80,25 @@ interface ICommand {
 
             if(subCommands!=null){
 
-                var canShow =true
-                if(neededPermissions!=null){
-                    var hasPermission = true
-                    neededPermissions!!.forEach {
-                        val hasThatPermission = ctx.member?.permissions?.contains(it)
-                        if( hasThatPermission==false)
-                            hasPermission = false
-                    }
-                    canShow = canShow && hasPermission
-                }
-
                 var subCommandNames=""
-                subCommands!!.forEach { if(canShow) subCommandNames+= it.getName()+"\n" }
+                subCommands!!.forEach {
+                    var canShow =true
+                    if(it.neededPermissions!=null){
+
+                        var hasPermission = true
+                        it.neededPermissions!!.forEach {
+
+                            val hasThatPermission = ctx.member?.permissions?.contains(it)
+                            if( hasThatPermission==false)
+                                hasPermission = false
+
+                        }
+                        canShow = canShow && hasPermission
+                    }
+                    if(canShow)
+                        subCommandNames+= it.getName()+"\n"
+                }
+                if(subCommandNames!="")
                 eb.addField("Subcommands:", subCommandNames, false)
 
             }

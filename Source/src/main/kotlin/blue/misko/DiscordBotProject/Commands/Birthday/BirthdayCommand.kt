@@ -10,9 +10,9 @@ class BirthdayCommand: ICommand {
     override val subCommands: ArrayList<ICommand>?
     init {
         subCommands = ArrayList<ICommand>()
-        subCommands.add(BirthdayAllCommand())
-        subCommands.add(BirthdayAddCommand())
-        subCommands.add(BirthdayRemoveCommand())
+        addSubCommand(BirthdayAllCommand())
+        addSubCommand(BirthdayAddCommand())
+        addSubCommand(BirthdayRemoveCommand())
     }
     override val neededPermissions: ArrayList<Permission>?
         get() = null
@@ -37,7 +37,7 @@ class BirthdayCommand: ICommand {
     }
 
     override fun getDescription(): String {
-        return ""
+        return "This group of commands is used to share your birthday with the rest of the server."
     }
 
     override fun getInstruction(): String {

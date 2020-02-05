@@ -18,7 +18,6 @@ class HelpCommand(private val manager: CommandManager): ICommand {
     override val hiddenCommand: Boolean
         get() = false
 
-
     override fun execute(ctx: CommandContext) {
         if (ctx.args.isEmpty()){
 
@@ -27,7 +26,24 @@ class HelpCommand(private val manager: CommandManager): ICommand {
             eb.setColor(Color.CYAN)
 
             var commandNames=""
-            manager.getCommands.forEach { if (!it.hiddenCommand) commandNames+= it.getName()+"\n" }
+            manager.getCommands.forEach {
+
+                var canShow = !it.hiddenCommand
+                if(it.neededPermissions!=null){
+
+                    var hasPermission = true
+                    it.neededPermissions!!.forEach { permission ->
+
+                        val hasThatPermission = ctx.member?.permissions?.contains(permission)
+                        if( hasThatPermission==false)
+                            hasPermission = false
+
+                    }
+                    canShow = canShow && hasPermission
+                }
+                if (canShow)
+                    commandNames+= it.getName()+"\n"
+            }
             eb.setDescription(commandNames)
 
             ctx.channel.sendMessage(eb.build()).queue()
@@ -48,7 +64,7 @@ class HelpCommand(private val manager: CommandManager): ICommand {
     }
 
     override fun getDescription(): String {
-        return "Literally this"
+        return "It shows all commands available to you or if given a command it will show its description like this"
     }
 
     override fun getInstruction(): String {

@@ -1,45 +1,41 @@
-package blue.misko.DiscordBotProject.Commands.Prefix
+package blue.misko.DiscordBotProject.Commands.Debug
 
-import blue.misko.DiscordBotProject.Objects.CommandContext
 import blue.misko.DiscordBotProject.Interface.ICommand
+import blue.misko.DiscordBotProject.Objects.CommandContext
 import blue.misko.DiscordBotProject.getPrefix
 import net.dv8tion.jda.api.Permission
 import java.util.ArrayList
 
-class PrefixCommand: ICommand {
-
+class DebugCommand: ICommand {
     override val subCommands: ArrayList<ICommand>?
     init {
-        subCommands = ArrayList()
-        addSubCommand(PrefixSetCommand())
+        subCommands = ArrayList<ICommand>()
+        addSubCommand(DebugTimeCommand())
     }
     override val neededPermissions: ArrayList<Permission>?
-        init{
-            neededPermissions = ArrayList<Permission>()
-            neededPermissions.add(Permission.MANAGE_SERVER)
-        }
+        get() = null
     override val neededRank: Int
         get() = 0
     override val hiddenCommand: Boolean
-        get() = false
+        get() = true
 
     override fun execute(ctx: CommandContext) {
         var success= handleSubCommand(ctx)
         if (!success){
-            ctx.channel.sendMessage("I don't know which command you are talking about. Try using "+ getPrefix(ctx.guild.id)+"help "+ getFullName())
+            ctx.channel.sendMessage("I don't know which command you are talking about. Try using "+ getPrefix(ctx.guild.id) +"help "+ getFullName())
         }
     }
 
     override fun getName(): String {
-        return "prefix"
+        return "debug"
     }
 
     override fun getFullName(): String {
-        return getName()
+        return "debug"
     }
 
     override fun getDescription(): String {
-        return "Used to set and check the prefix for this server"
+        return "The commands to help developers check bot data"
     }
 
     override fun getInstruction(): String {

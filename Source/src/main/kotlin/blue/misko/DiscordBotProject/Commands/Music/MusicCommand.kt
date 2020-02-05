@@ -13,7 +13,8 @@ class MusicCommand: ICommand {
     override val subCommands: ArrayList<ICommand>?
     init {
         subCommands = ArrayList<ICommand>()
-        subCommands.add(MusicPlayCommand())
+        addSubCommand(MusicPlayCommand())
+        addSubCommand(MusicStopCommand())
     }
     override val neededPermissions: ArrayList<Permission>?
         get() = null
@@ -38,7 +39,7 @@ class MusicCommand: ICommand {
     }
 
     override fun getDescription(): String {
-        return ""
+        return "Used to play music in voice channels"
     }
 
     override fun getInstruction(): String {

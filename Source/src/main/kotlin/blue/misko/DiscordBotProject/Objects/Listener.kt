@@ -21,6 +21,7 @@ class Listener: ListenerAdapter() {
         }
         val prefix = getPrefix(event.guild.id)
         var command =event.message.contentRaw.decapitalize()
+
         if(event.author.id=="216095103104712706" && command=="shutdown"){
             exitProcess(0)
         }
