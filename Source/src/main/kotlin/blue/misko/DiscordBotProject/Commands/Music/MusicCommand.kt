@@ -1,8 +1,5 @@
 package blue.misko.DiscordBotProject.Commands.Music
 
-import blue.misko.DiscordBotProject.Commands.Birthday.BirthdayAddCommand
-import blue.misko.DiscordBotProject.Commands.Birthday.BirthdayAllCommand
-import blue.misko.DiscordBotProject.Commands.Birthday.BirthdayRemoveCommand
 import blue.misko.DiscordBotProject.Interface.ICommand
 import blue.misko.DiscordBotProject.Objects.CommandContext
 import blue.misko.DiscordBotProject.getPrefix
@@ -16,12 +13,14 @@ class MusicCommand: ICommand {
         addSubCommand(MusicPlayCommand())
         addSubCommand(MusicStopCommand())
     }
+
     override val neededPermissions: ArrayList<Permission>?
         get() = null
     override val neededRank: Int
         get() = 0
     override val hiddenCommand: Boolean
         get() = false
+
 
     override fun execute(ctx: CommandContext) {
         var success= handleSubCommand(ctx)
